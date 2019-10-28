@@ -131,6 +131,15 @@ class Session(object):
         ipset.session_outfn(self._session, 0)
         ipset.session_output(self._session, IPSET_LIST_XML)
 
+    def create(self, name, type):
+        ipset.parse_setname(self._session, IPSET_SETNAME, name)
+        ipset.parse_typename(self._session, IPSET_OPT_TYPENAME, type)
+        return ipset.cmd(self._session, IPSET_CMD_CREATE, 0)
+
+    def destroy(self, name):
+        ipset.parse_setname(self._session, IPSET_SETNAME, name)
+        return ipset.cmd(self._session, IPSET_CMD_DESTROY, 0)
+
     def add(self, name, value):
         ipset.parse_setname(self._session, IPSET_SETNAME, name)
         ipset.type_get(self._session, IPSET_CMD_ADD)
@@ -164,11 +173,13 @@ if __name__ == "__main__":
     session = Session()
     print session
 
-    name = "h"
+    name = "demo"
 
+    print session.create(name, "hash:net")
     print session.list(name)
     print session.add(name, '10.0.0.1')
     print session.list(name)
     print session.test(name, '10.0.0.1')
     print session.delete(name, '10.0.0.1')
     print session.list(name)
+    print session.destroy(name)
